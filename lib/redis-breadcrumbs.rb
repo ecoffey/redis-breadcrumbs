@@ -1,0 +1,1 @@
+require 'redis-breadcrumbs/breadcrumb'
