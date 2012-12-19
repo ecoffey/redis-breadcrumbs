@@ -27,4 +27,14 @@ describe 'Redis::Breadcrumb' do
     assert_equal 1, Redis::Breadcrumb.redis.scard(TestBreadcrumb.tracked_in)
     assert_equal [["del", "a_owned_key"]], TestBreadcrumb.tracked_keys
   end
+
+  it 'tracks keys for each class' do
+    class Test2Breadcrumb < Redis::Breadcrumb
+      tracked_in 'different_tracking_key'
+
+      owns :a_different_key
+    end
+
+    refute_equal TestBreadcrumb.owned_keys, Test2Breadcrumb.owned_keys
+  end
 end
