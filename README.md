@@ -25,7 +25,13 @@ end
 
 ## Usage
 
-No release yet :)
+Either
+
+`gem install redis-breadcrumbs`
+
+or add the following to your Gemfile
+
+`gem "redis-breadcrumbs", "~> 0.0.1"`
 
 ## Contributing
 
