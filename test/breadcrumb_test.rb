@@ -37,4 +37,5 @@ describe 'Redis::Breadcrumb' do
 
     refute_equal TestBreadcrumb.owned_keys, Test2Breadcrumb.owned_keys
   end
+
 end
