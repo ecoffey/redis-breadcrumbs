@@ -26,10 +26,8 @@ module Redis
         (@member_of_sets ||= []) << [member, set]
       end
 
-      def register
-        @owned_keys.each do |key|
-          redis.sadd @tracked_in, [:del, key].to_json
-        end
+      def register object=nil
+        new(object).tap(&:register)
       end
 
       def tracked_keys
@@ -45,7 +43,25 @@ module Redis
       specialize_with object
     end
 
+    def register
+      jsons = @owned_keys.map do |owned_key|
+        [:del, owned_key].to_json
+      end
+
+      redis.sadd @tracked_in, jsons
+    end
+
+    def tracked_keys
+      redis.smembers(@tracked_in).map do |json|
+        JSON.parse(json)
+      end
+    end
+
     private
+
+    def redis
+      self.class.redis
+    end
 
     def specialize_with object
       tracked_in_template = self.class.tracked_in

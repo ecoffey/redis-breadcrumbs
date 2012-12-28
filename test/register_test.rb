@@ -7,6 +7,8 @@ describe 'Redis::Breadcrumb' do
 
   it 'can register owned keys for a specific object' do
     class OwnedBreadcrumb < Redis::Breadcrumb
+      tracked_in 'widget:<id>:tracking'
+
       owns 'widget:<id>'    
     end
 
