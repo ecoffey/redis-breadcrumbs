@@ -21,7 +21,7 @@ class WorkerBreadcrumb < Redis::Breadcrumb
   owns 'resque:worker:<id>'
   owns 'resque:worker:<id>:started'
 
-  member_of_set :id => 'resque:workers'
+  member_of_set '<id>' => 'resque:workers'
 end
 ```
 
