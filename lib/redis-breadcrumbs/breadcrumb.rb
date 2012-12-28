@@ -1,7 +1,7 @@
 module Redis
   class Breadcrumb
     class << self
-      attr_accessor :owned_keys
+      attr_accessor :owned_keys, :member_of_sets
 
       def redis
        @@redis
@@ -17,6 +17,13 @@ module Redis
 
       def owns key
         (@owned_keys ||= []) << key
+      end
+
+      def member_of_set member_to_set
+        member = member_to_set.keys[0]
+        set = member_to_set[member]
+
+        (@member_of_sets ||= []) << [member, set]
       end
 
       def register
@@ -37,6 +44,8 @@ module Redis
     def initialize object
       specialize_with object
     end
+
+    private
 
     def specialize_with object
       tracked_in_template = self.class.tracked_in
