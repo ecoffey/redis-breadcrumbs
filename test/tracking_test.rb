@@ -5,6 +5,24 @@ describe 'Redis::Breadcrumb' do
     Redis::Breadcrumb.redis = MockRedis.new
   end
 
+  it 'will track tracked keys in tracked_in' do
+    class TrackedInBreadcrumb < Redis::Breadcrumb
+      tracked_in 'tracking_key'
+
+      owns :a_owned_key
+
+      member_of_set :id => :a_set_of_things
+    end
+
+    TrackedInBreadcrumb .track
+
+    assert_equal 2, Redis::Breadcrumb.redis.scard(TrackedInBreadcrumb.tracked_in)
+    assert_equal [
+      ["srem", "a_set_of_things", "id"],
+      ["del", "a_owned_key"]
+    ].sort, TrackedInBreadcrumb.tracked_keys.sort
+  end
+
   it 'can track owned keys for a specific object' do
     class OwnedBreadcrumb < Redis::Breadcrumb
       tracked_in 'widget:<id>:tracking'
