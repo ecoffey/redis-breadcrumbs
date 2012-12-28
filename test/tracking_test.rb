@@ -14,12 +14,24 @@ describe 'Redis::Breadcrumb' do
       member_of_set :id => :a_set_of_things
     end
 
-    TrackedInBreadcrumb .track
+    TrackedInBreadcrumb.track
 
     assert_equal [
       ["srem", "a_set_of_things", "id"],
       ["del", "a_owned_key"]
     ].sort, TrackedInBreadcrumb.tracked_keys.sort
+  end
+
+  it 'will raise if no object given for specialized template' do
+    class UnspecializedBreadcrumb < Redis::Breadcrumb
+      tracked_in 'tracking_key'
+
+      owns 'a_special_<id>_key'
+    end
+
+    assert_raises BreadcrumbSpecializationError do
+      UnspecializedBreadcrumb.track
+    end
   end
 
   it 'can track owned keys for a specific object' do
