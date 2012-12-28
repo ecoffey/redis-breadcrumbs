@@ -1,5 +1,17 @@
+require 'redis-breadcrumbs/breadcrumb_specialization_error'
+
 module Redis
   class Breadcrumb
+    class UnspecializedDummyObject
+      instance_methods.each { |m| undef_method m }
+
+      def method_missing method, *args
+        raise BreadcrumbSpecializationError, "#{method}"
+      end
+
+      def respond_to? *args; false; end
+    end
+
     class << self
       def redis
        @@redis
@@ -24,7 +36,7 @@ module Redis
         member_of_sets << [member, set]
       end
 
-      def track object=nil
+      def track object=UnspecializedDummyObject.new
         new(object).tap(&:track)
       end
 

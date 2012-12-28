@@ -1,0 +1,1 @@
+class BreadcrumbSpecializationError < Exception; end
