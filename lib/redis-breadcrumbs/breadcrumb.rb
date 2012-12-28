@@ -32,7 +32,7 @@ module Redis
       end
     end
 
-    attr_reader :tracked_in
+    attr_reader :tracked_in, :owned_keys
 
     def initialize object
       specialize_with object
@@ -42,6 +42,9 @@ module Redis
       tracked_in_template = self.class.tracked_in
 
       @tracked_in = specialize_from_template tracked_in_template, object
+      @owned_keys = self.class.owned_keys.map do |owned_key_template|
+        specialize_from_template owned_key_template, object
+      end
     end
 
     TEMPLATE_REGEX = /(<\w+>)/
