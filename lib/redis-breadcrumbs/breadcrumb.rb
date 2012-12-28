@@ -75,7 +75,7 @@ module Redis
     TEMPLATE_REGEX = /(<\w+>)/
 
     def specialize_from_template template, object
-      matches = template.match TEMPLATE_REGEX
+      matches = TEMPLATE_REGEX.match template.to_s
 
       return template if matches.nil?
 
