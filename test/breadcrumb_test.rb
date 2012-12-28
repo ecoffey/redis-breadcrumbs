@@ -5,6 +5,8 @@ describe 'Redis::Breadcrumb' do
     tracked_in 'tracking_key'
 
     owns :a_owned_key
+
+    member_of_set :id => :a_set_of_things
   end
 
   before do
@@ -19,6 +21,10 @@ describe 'Redis::Breadcrumb' do
 
   it 'can own a key' do
     assert_equal [:a_owned_key], TestBreadcrumb.owned_keys
+  end
+
+  it 'can be a member of a set' do
+    assert_equal [[:id, :a_set_of_things]], TestBreadcrumb.member_of_sets
   end
 
   it 'will register tracked keys in tracked_in' do
