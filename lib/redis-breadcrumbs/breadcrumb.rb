@@ -24,8 +24,8 @@ module Redis
         member_of_sets << [member, set]
       end
 
-      def register object=nil
-        new(object).tap(&:register)
+      def track object=nil
+        new(object).tap(&:track)
       end
 
       def tracked_keys
@@ -49,9 +49,9 @@ module Redis
       specialize_with object
     end
 
-    def register
-      register_owned_keys
-      register_member_of_set_keys
+    def track
+      track_owned_keys
+      track_member_of_set_keys
     end
 
     def tracked_keys
@@ -62,7 +62,7 @@ module Redis
 
     private
 
-    def register_owned_keys
+    def track_owned_keys
       jsons = @owned_keys.map do |owned_key|
         [:del, owned_key].to_json
       end
@@ -72,7 +72,7 @@ module Redis
       end
     end
 
-    def register_member_of_set_keys
+    def track_member_of_set_keys
       jsons = @member_of_set_keys.map do |member_of_set_key|
         [:srem, member_of_set_key[:set], member_of_set_key[:member]].to_json
       end

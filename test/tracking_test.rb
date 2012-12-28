@@ -5,7 +5,7 @@ describe 'Redis::Breadcrumb' do
     Redis::Breadcrumb.redis = MockRedis.new
   end
 
-  it 'can register owned keys for a specific object' do
+  it 'can track owned keys for a specific object' do
     class OwnedBreadcrumb < Redis::Breadcrumb
       tracked_in 'widget:<id>:tracking'
 
@@ -17,12 +17,12 @@ describe 'Redis::Breadcrumb' do
       def id; "foo"; end
     end
 
-    breadcrumb = OwnedBreadcrumb.register(obj)
+    breadcrumb = OwnedBreadcrumb.track(obj)
 
     assert_equal [["del", "widget:foo"]], breadcrumb.tracked_keys
   end
 
-  it 'can register member of set keys for a specific object' do
+  it 'can track member of set keys for a specific object' do
     class MemberOfSetBreadcrumb < Redis::Breadcrumb
       tracked_in 'widget:<id>:tracking'
 
@@ -34,7 +34,7 @@ describe 'Redis::Breadcrumb' do
       def id; "foo"; end
     end
 
-    breadcrumb = MemberOfSetBreadcrumb.register(obj)
+    breadcrumb = MemberOfSetBreadcrumb.track(obj)
 
     assert_equal [["srem", "a_set_of_things", "foo"]], breadcrumb.tracked_keys
   end

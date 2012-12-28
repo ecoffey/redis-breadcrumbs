@@ -27,8 +27,8 @@ describe 'Redis::Breadcrumb' do
     assert_equal [[:id, :a_set_of_things]], TestBreadcrumb.member_of_sets
   end
 
-  it 'will register tracked keys in tracked_in' do
-    TestBreadcrumb.register
+  it 'will track tracked keys in tracked_in' do
+    TestBreadcrumb.track
 
     assert_equal 2, Redis::Breadcrumb.redis.scard(TestBreadcrumb.tracked_in)
     assert_equal [
