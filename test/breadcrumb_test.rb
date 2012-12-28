@@ -30,8 +30,11 @@ describe 'Redis::Breadcrumb' do
   it 'will register tracked keys in tracked_in' do
     TestBreadcrumb.register
 
-    assert_equal 1, Redis::Breadcrumb.redis.scard(TestBreadcrumb.tracked_in)
-    assert_equal [["del", "a_owned_key"]], TestBreadcrumb.tracked_keys
+    assert_equal 2, Redis::Breadcrumb.redis.scard(TestBreadcrumb.tracked_in)
+    assert_equal [
+      ["srem", "a_set_of_things", "id"],
+      ["del", "a_owned_key"]
+    ], TestBreadcrumb.tracked_keys
   end
 
   it 'tracks keys for each class' do

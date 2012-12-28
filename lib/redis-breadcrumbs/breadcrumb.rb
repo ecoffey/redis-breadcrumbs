@@ -1,8 +1,6 @@
 module Redis
   class Breadcrumb
     class << self
-      attr_accessor :owned_keys, :member_of_sets
-
       def redis
        @@redis
       end
@@ -16,14 +14,14 @@ module Redis
       end
 
       def owns key
-        (@owned_keys ||= []) << key
+        owned_keys << key
       end
 
       def member_of_set member_to_set
         member = member_to_set.keys[0]
         set = member_to_set[member]
 
-        (@member_of_sets ||= []) << [member, set]
+        member_of_sets << [member, set]
       end
 
       def register object=nil
@@ -35,6 +33,14 @@ module Redis
           JSON.parse(json)
         end
       end
+
+      def owned_keys
+        @owned_keys ||= []
+      end
+
+      def member_of_sets
+        @member_of_sets ||= []
+      end
     end
 
     attr_reader :tracked_in, :owned_keys
@@ -44,11 +50,8 @@ module Redis
     end
 
     def register
-      jsons = @owned_keys.map do |owned_key|
-        [:del, owned_key].to_json
-      end
-
-      redis.sadd @tracked_in, jsons
+      register_owned_keys
+      register_member_of_set_keys
     end
 
     def tracked_keys
@@ -59,6 +62,26 @@ module Redis
 
     private
 
+    def register_owned_keys
+      jsons = @owned_keys.map do |owned_key|
+        [:del, owned_key].to_json
+      end
+
+      unless jsons.empty?
+        redis.sadd @tracked_in, jsons
+      end
+    end
+
+    def register_member_of_set_keys
+      jsons = @member_of_set_keys.map do |member_of_set_key|
+        [:srem, member_of_set_key[:set], member_of_set_key[:member]].to_json
+      end
+
+      unless jsons.empty?
+        redis.sadd @tracked_in, jsons
+      end
+    end
+
     def redis
       self.class.redis
     end
@@ -67,8 +90,20 @@ module Redis
       tracked_in_template = self.class.tracked_in
 
       @tracked_in = specialize_from_template tracked_in_template, object
+      specialize_owned_keys object
+      specialize_member_of_set_keys object
+    end
+
+    def specialize_owned_keys object
       @owned_keys = self.class.owned_keys.map do |owned_key_template|
         specialize_from_template owned_key_template, object
+      end
+    end
+
+    def specialize_member_of_set_keys object
+      @member_of_set_keys = self.class.member_of_sets.map do |member_of_set_template|
+        member = specialize_from_template member_of_set_template[0], object
+        { :member => member, :set => member_of_set_template[1] }
       end
     end
 
