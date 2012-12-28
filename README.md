@@ -1,3 +1,5 @@
+[![Build Status](https://travis-ci.org/ecoffey/redis-breadcrumbs.png)](https://travis-ci.org/ecoffey/redis-breadcrumbs)
+
 ## Redis and key tracking
 
 Redis is a bit different than a lot of other "data stores". This also means that thinking about ownership management
