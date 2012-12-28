@@ -16,7 +16,6 @@ describe 'Redis::Breadcrumb' do
 
     TrackedInBreadcrumb .track
 
-    assert_equal 2, Redis::Breadcrumb.redis.scard(TrackedInBreadcrumb.tracked_in)
     assert_equal [
       ["srem", "a_set_of_things", "id"],
       ["del", "a_owned_key"]
