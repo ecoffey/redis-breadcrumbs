@@ -34,7 +34,7 @@ describe 'Redis::Breadcrumb' do
     assert_equal [
       ["srem", "a_set_of_things", "id"],
       ["del", "a_owned_key"]
-    ], TestBreadcrumb.tracked_keys
+    ].sort, TestBreadcrumb.tracked_keys.sort
   end
 
   it 'tracks keys for each class' do
