@@ -1,59 +1,8 @@
-require 'redis-breadcrumbs/breadcrumb_specialization_error'
+require 'redis-breadcrumbs/dsl'
 
 module Redis
   class Breadcrumb
-    class UnspecializedDummyObject
-      instance_methods.each { |m| undef_method m }
-
-      def method_missing method, *args
-        raise BreadcrumbSpecializationError, "#{method}"
-      end
-
-      def respond_to? *args; false; end
-    end
-
-    class << self
-      def redis
-       @@redis
-      end
-
-      def redis= redis
-        @@redis = redis
-      end
-
-      def tracked_in *args
-        args.length > 0 ? @tracked_in = args[0] : @tracked_in
-      end
-
-      def owns key
-        owned_keys << key
-      end
-
-      def member_of_set member_to_set
-        member = member_to_set.keys[0]
-        set = member_to_set[member]
-
-        member_of_sets << [member, set]
-      end
-
-      def track object=UnspecializedDummyObject.new
-        new(object).tap(&:track)
-      end
-
-      def tracked_keys
-        redis.smembers(@tracked_in).map do |json|
-          JSON.parse(json)
-        end
-      end
-
-      def owned_keys
-        @owned_keys ||= []
-      end
-
-      def member_of_sets
-        @member_of_sets ||= []
-      end
-    end
+    include Breadcrumbs::Dsl
 
     attr_reader :tracked_in, :owned_keys
 
