@@ -51,8 +51,8 @@ module Breadcrumbs
         new(object).tap(&:track!)
       end
 
-      def clean!
-        new(nil).tap(&:clean!)
+      def clean! object=UnspecializedDummyObject.new
+        new(object).tap(&:clean!)
       end
 
       def tracked_keys
