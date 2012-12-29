@@ -14,12 +14,13 @@ class Redis
     def track!
       return if @tracked_in.nil?
 
-      track_owned_keys
-      track_member_of_set_keys
+      track_clean_commands
     end
 
     def clean!
-      @clean_cmds.each do |cmd_tuple|
+      cmds = Set.new tracked_keys.concat(@clean_cmds)
+
+      cmds.each do |cmd_tuple|
         cmd = cmd_tuple[0]
         args = cmd_tuple[1..-1]
         redis.send cmd, *args
@@ -37,6 +38,7 @@ class Redis
     def build_clean_commands
       @clean_cmds = []
       @clean_cmds.concat clean_cmds_owned_keys
+      @clean_cmds.concat clean_cmds_member_of_set_keys
     end
 
     def clean_cmds_owned_keys
@@ -45,24 +47,16 @@ class Redis
       end
     end
 
-    def track_owned_keys
-      jsons = @owned_keys.map do |owned_key|
-        [:del, owned_key].to_json
-      end
-
-      unless jsons.empty?
-        redis.sadd @tracked_in, jsons
+    def clean_cmds_member_of_set_keys
+      @member_of_set_keys.map do |member_of_set_key|
+        [:srem, member_of_set_key[:set], member_of_set_key[:member]]
       end
     end
 
-    def track_member_of_set_keys
-      jsons = @member_of_set_keys.map do |member_of_set_key|
-        [:srem, member_of_set_key[:set], member_of_set_key[:member]].to_json
-      end
+    def track_clean_commands
+      jsons = @clean_cmds.map(&:to_json)
 
-      unless jsons.empty?
-        redis.sadd @tracked_in, jsons
-      end
+      redis.sadd @tracked_in, jsons
     end
 
     def specialize_with object
