@@ -19,9 +19,9 @@ Gem::Specification.new do |s|
   s.require_paths = ["lib"]
 
   s.add_dependency "json"
+  s.add_dependency "redis"
 
   s.add_development_dependency "rake", ">= 0.9.2"
-  s.add_development_dependency "redis", "~> 3.0.0"
   s.add_development_dependency "minitest", "~> 4.3.2"
   s.add_development_dependency "mock_redis", "~> 0.6"
 end
