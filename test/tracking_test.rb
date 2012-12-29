@@ -5,7 +5,7 @@ describe 'Redis::Breadcrumb' do
     Redis::Breadcrumb.redis = MockRedis.new
   end
 
-  it 'will track tracked keys in tracked_in' do
+  it 'can track tracked keys in tracked_in' do
     class TrackedInBreadcrumb < Redis::Breadcrumb
       tracked_in 'tracking_key'
 
@@ -20,6 +20,16 @@ describe 'Redis::Breadcrumb' do
       ["srem", "a_set_of_things", "id"],
       ["del", "a_owned_key"]
     ].sort, TrackedInBreadcrumb.tracked_keys.sort
+  end
+
+  it 'tracked_in can be optional' do
+    class NoTrackedInBreadcrumb < Redis::Breadcrumb
+      owns :a_key
+    end
+
+    NoTrackedInBreadcrumb.track
+
+    assert_equal [], NoTrackedInBreadcrumb.redis.keys('*')
   end
 
   it 'will raise if no object given for specialized template' do
