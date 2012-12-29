@@ -1,6 +1,6 @@
 require 'redis-breadcrumbs/dsl'
 
-module Redis
+class Redis
   class Breadcrumb
     include Breadcrumbs::Dsl
 
