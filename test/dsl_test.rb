@@ -26,7 +26,7 @@ describe 'Redis::Breadcrumb' do
     Redis::Breadcrumb.redis.set 'blah', 1
 
     assert_nil redis.get('namespaced:blah')
-    assert_equal 1, redis.get('blah')
+    assert_equal "1", redis.get('blah')
   end
 
   it 'can record a key to track in' do

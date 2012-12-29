@@ -25,6 +25,10 @@ module Breadcrumbs
       end
 
       def redis= redis
+        if defined?(Redis::Namespace) && redis.is_a?(Redis::Namespace)
+          redis = redis.redis # yo dawg
+        end
+
         @@redis = redis
       end
 
