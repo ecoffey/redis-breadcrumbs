@@ -47,4 +47,31 @@ describe 'Redis::Breadcrumb' do
 
     assert_nil CleanUpCurrentSpecializedKeys.redis.get('widget:foo')
   end
+
+  it 'will clean up previously tracked and current keys' do
+    class CleanUpPrevAndCurrentKeys < Redis::Breadcrumb
+      tracked_in 'widget:<id>:tracking'
+
+      owns 'widget:<id>'
+
+      member_of_set '<id>' => 'widgets'
+    end
+
+    obj = Object.new
+    class << obj
+      def id; 'foo'; end
+    end
+
+    CleanUpPrevAndCurrentKeys.redis.sadd 'widget:foo:tracking', [:del, 'widget:foo:blah'].to_json
+
+    CleanUpPrevAndCurrentKeys.redis.set 'widget:foo', 'hello'
+    CleanUpPrevAndCurrentKeys.redis.set 'widget:foo:blah', 'world'
+    CleanUpPrevAndCurrentKeys.redis.sadd 'widgets', 'foo'
+
+    CleanUpPrevAndCurrentKeys.clean! obj
+
+    assert_nil CleanUpPrevAndCurrentKeys.redis.get('widget:foo')
+    assert_nil CleanUpPrevAndCurrentKeys.redis.get('widget:foo:blah')
+    refute CleanUpPrevAndCurrentKeys.redis.sismember('widgets', 'foo')
+  end
 end
