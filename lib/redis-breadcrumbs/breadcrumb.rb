@@ -8,11 +8,22 @@ class Redis
 
     def initialize object
       specialize_with object
+      build_clean_commands
     end
 
     def track
+      return if @tracked_in.nil?
+
       track_owned_keys
       track_member_of_set_keys
+    end
+
+    def clean!
+      @clean_cmds.each do |cmd_tuple|
+        cmd = cmd_tuple[0]
+        args = cmd_tuple[1..-1]
+        redis.send cmd, *args
+      end
     end
 
     def tracked_keys
@@ -22,6 +33,17 @@ class Redis
     end
 
     private
+
+    def build_clean_commands
+      @clean_cmds = []
+      @clean_cmds.concat clean_cmds_owned_keys
+    end
+
+    def clean_cmds_owned_keys
+      @owned_keys.map do |owned_key|
+        [:del, owned_key.to_s]
+      end
+    end
 
     def track_owned_keys
       jsons = @owned_keys.map do |owned_key|
@@ -41,10 +63,6 @@ class Redis
       unless jsons.empty?
         redis.sadd @tracked_in, jsons
       end
-    end
-
-    def redis
-      self.class.redis
     end
 
     def specialize_with object
@@ -85,5 +103,10 @@ class Redis
 
       specialized
     end
+
+    def redis
+      self.class.redis
+    end
+
   end
 end

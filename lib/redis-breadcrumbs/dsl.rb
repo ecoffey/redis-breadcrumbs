@@ -51,6 +51,10 @@ module Breadcrumbs
         new(object).tap(&:track)
       end
 
+      def clean!
+        new(nil).tap(&:clean!)
+      end
+
       def tracked_keys
         redis.smembers(@tracked_in).map do |json|
           JSON.parse(json)
