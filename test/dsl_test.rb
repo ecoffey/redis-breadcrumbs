@@ -15,6 +15,20 @@ describe 'Redis::Breadcrumb' do
     Redis::Breadcrumb.redis = redis
   end
 
+  it 'will unwrap a RedisNamespace to the "raw" client' do
+    require 'redis-namespace'
+
+    redis = MockRedis.new
+    rn = Redis::Namespace.new :namespaced, :redis => redis
+
+    Redis::Breadcrumb.redis = rn
+
+    Redis::Breadcrumb.redis.set 'blah', 1
+
+    assert_nil redis.get('namespaced:blah')
+    assert_equal 1, redis.get('blah')
+  end
+
   it 'can record a key to track in' do
     assert_equal 'tracking_key', DslBreadcrumb.tracked_in
   end
