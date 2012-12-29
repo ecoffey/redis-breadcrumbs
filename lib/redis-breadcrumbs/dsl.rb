@@ -47,8 +47,8 @@ module Breadcrumbs
         member_of_sets << [member, set]
       end
 
-      def track object=UnspecializedDummyObject.new
-        new(object).tap(&:track)
+      def track! object=UnspecializedDummyObject.new
+        new(object).tap(&:track!)
       end
 
       def clean!

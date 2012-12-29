@@ -14,7 +14,7 @@ describe 'Redis::Breadcrumb' do
       member_of_set :id => :a_set_of_things
     end
 
-    TrackedInBreadcrumb.track
+    TrackedInBreadcrumb.track!
 
     assert_equal [
       ["srem", "a_set_of_things", "id"],
@@ -27,7 +27,7 @@ describe 'Redis::Breadcrumb' do
       owns :a_key
     end
 
-    NoTrackedInBreadcrumb.track
+    NoTrackedInBreadcrumb.track!
 
     assert_equal [], NoTrackedInBreadcrumb.redis.keys('*')
   end
@@ -40,7 +40,7 @@ describe 'Redis::Breadcrumb' do
     end
 
     assert_raises BreadcrumbSpecializationError do
-      UnspecializedBreadcrumb.track
+      UnspecializedBreadcrumb.track!
     end
   end
 
@@ -56,7 +56,7 @@ describe 'Redis::Breadcrumb' do
       def id; "foo"; end
     end
 
-    breadcrumb = OwnedBreadcrumb.track(obj)
+    breadcrumb = OwnedBreadcrumb.track!(obj)
 
     assert_equal [["del", "widget:foo"]], breadcrumb.tracked_keys
   end
@@ -73,7 +73,7 @@ describe 'Redis::Breadcrumb' do
       def id; "foo"; end
     end
 
-    breadcrumb = MemberOfSetBreadcrumb.track(obj)
+    breadcrumb = MemberOfSetBreadcrumb.track!(obj)
 
     assert_equal [["srem", "a_set_of_things", "foo"]], breadcrumb.tracked_keys
   end

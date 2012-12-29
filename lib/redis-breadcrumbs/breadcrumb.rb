@@ -11,7 +11,7 @@ class Redis
       build_clean_commands
     end
 
-    def track
+    def track!
       return if @tracked_in.nil?
 
       track_owned_keys
