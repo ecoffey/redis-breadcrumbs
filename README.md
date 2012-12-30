@@ -40,12 +40,12 @@ or add the following to your Gemfile
 Create your breadcrumb; we'll continue with the Resque example:
 
 ```ruby
-  class WorkerBreadcrumb < Redis::Breadcrumb
-    owns 'resque:worker:<id>'
-    owns 'resque:worker:<id>:started'
+class WorkerBreadcrumb < Redis::Breadcrumb
+  owns 'resque:worker:<id>'
+  owns 'resque:worker:<id>:started'
 
-    member_of_set '<id>' => 'resque:workers'
-  end
+  member_of_set '<id>' => 'resque:workers'
+end
 ```
 
 Keys that have `<...>` snippets in them are **templates**.  When you call `track!` or `clean!`,
@@ -59,23 +59,23 @@ defined in the class (because of code changes, etc).
 Breadcrumb also needs to be told about a redis connection:
 
 ```ruby
-  # Breadcrumb always operates on the 'raw' client,
-  # so it will 'unwrap' Redis::Namespace
+# Breadcrumb always operates on the 'raw' client,
+# so it will 'unwrap' Redis::Namespace
 
-  Redis::Breadcrumb.redis = Resque.redis
+Redis::Breadcrumb.redis = Resque.redis
 ```
 
 When you're ready to start tracking keys (say after the worker finished booting) you can
 do:
 
 ```ruby
-  WorkerBreadcrumb.track!(self)
+WorkerBreadcrumb.track!(self)
 ```
 
 And when you're ready to clean up keys (say when working is shutting down, or in a clean up rake task)
 
 ```ruby
-  WorkerBreadcrumb.clean!(self)
+WorkerBreadcrumb.clean!(self)
 ```
 
 ## Contributing
