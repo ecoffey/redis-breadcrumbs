@@ -51,7 +51,7 @@ end
 Keys that have `<...>` snippets in them are **templates**.  When you call `track!` or `clean!`,
 the Breadcrumb will expect an object that responds to symbols in between the brackets.
 
-You can also specify a key to track keys in, with `tracked_in 'resque:worker:<id>:tracking'`_
+You can also specify a key to track keys in, with `tracked_in 'resque:worker:<id>:tracking'`
 
 Using `tracked_in` will let your breadcrumb remember how to clean up keys, that are not currently
 defined in the class (because of code changes, etc).
