@@ -55,6 +55,16 @@ module Breadcrumbs
         keys << MemberOfSetKey.new(member, set, :srem)
       end
 
+      def member_of_sorted_set member_to_set
+        member = member_to_set.keys[0]
+        set = member_to_set[member]
+
+        member_of_sorted_sets << [member, set]
+        keys << MemberOfSetKey.new(member, set, :zrem)
+      end
+
+      alias :member_of_zset :member_of_sorted_set
+
       def track! object=UnspecializedDummyObject.new
         new(object).tap(&:track!)
       end
@@ -79,6 +89,10 @@ module Breadcrumbs
 
       def member_of_sets
         @member_of_sets ||= []
+      end
+
+      def member_of_sorted_sets
+        @member_of_sorted_sets ||= []
       end
     end
 
