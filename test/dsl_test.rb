@@ -7,6 +7,7 @@ describe 'Redis::Breadcrumb' do
     owns :a_owned_key
 
     member_of_set :id => :a_set_of_things
+    member_of_zset :id => :a_sorted_set_of_things
   end
 
   before do
@@ -39,6 +40,10 @@ describe 'Redis::Breadcrumb' do
 
   it 'can be a member of a set' do
     assert_equal [[:id, :a_set_of_things]], DslBreadcrumb.member_of_sets
+  end
+
+  it 'can be a member of a sorted set' do
+    assert_equal [[:id, :a_sorted_set_of_things]], DslBreadcrumb.member_of_sorted_sets
   end
 
   it 'tracks keys for each class' do
