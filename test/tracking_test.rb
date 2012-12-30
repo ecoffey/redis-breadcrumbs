@@ -77,4 +77,21 @@ describe 'Redis::Breadcrumb' do
 
     assert_equal [["srem", "a_set_of_things", "foo"]], breadcrumb.tracked_keys
   end
+
+  it 'can track member of sorted set keys for a specific object' do
+    class MemberOfZsetBreadcrumb < Redis::Breadcrumb
+      tracked_in 'widget:<id>:tracking'
+
+      member_of_zset "<id>" => :a_sorted_set_of_things
+    end
+
+    obj = Object.new
+    class << obj
+      def id; "foo"; end
+    end
+
+    breadcrumb = MemberOfZsetBreadcrumb.track!(obj)
+
+    assert_equal [["zrem", "a_sorted_set_of_things", "foo"]], breadcrumb.tracked_keys
+  end
 end
