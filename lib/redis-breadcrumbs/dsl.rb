@@ -1,3 +1,5 @@
+require 'redis-breadcrumbs/keys'
+
 class BreadcrumbSpecializationError < Exception; end
 
 module Breadcrumbs
@@ -21,7 +23,7 @@ module Breadcrumbs
 
     module ClassMethods
       def redis
-       @@redis
+        @@redis
       end
 
       def redis= redis
@@ -36,8 +38,13 @@ module Breadcrumbs
         args.length > 0 ? @tracked_in = args[0] : @tracked_in
       end
 
+      def tracked_in_key
+        Key.new tracked_in
+      end
+
       def owns key
         owned_keys << key
+        keys << OwnedKey.new(key)
       end
 
       def member_of_set member_to_set
@@ -45,6 +52,7 @@ module Breadcrumbs
         set = member_to_set[member]
 
         member_of_sets << [member, set]
+        keys << MemberOfSetKey.new(member, set, :srem)
       end
 
       def track! object=UnspecializedDummyObject.new
@@ -59,6 +67,10 @@ module Breadcrumbs
         redis.smembers(@tracked_in).map do |json|
           JSON.parse(json)
         end
+      end
+
+      def keys
+        @keys ||= Keys.new
       end
 
       def owned_keys
