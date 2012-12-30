@@ -13,7 +13,7 @@ class Redis
     end
 
     def track!
-      return if @tracked_in.nil?
+      return if @tracked_in.nil? || @tracked_in == ""
 
       track_clean_commands
     end

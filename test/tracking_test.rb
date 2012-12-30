@@ -48,7 +48,7 @@ describe 'Redis::Breadcrumb' do
     class OwnedBreadcrumb < Redis::Breadcrumb
       tracked_in 'widget:<id>:tracking'
 
-      owns 'widget:<id>'    
+      owns 'widget:<id>'
     end
 
     obj = Object.new
