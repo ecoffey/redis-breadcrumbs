@@ -12,13 +12,15 @@ describe 'Redis::Breadcrumb' do
       owns :a_owned_key
 
       member_of_set :id => :a_set_of_things
+      member_of_zset :id => :a_sorted_set_of_things
     end
 
     TrackedInBreadcrumb.track!
 
     assert_equal [
       ["srem", "a_set_of_things", "id"],
-      ["del", "a_owned_key"]
+      ["del", "a_owned_key"],
+      ["zrem", "a_sorted_set_of_things", "id"]
     ].sort, TrackedInBreadcrumb.tracked_keys.sort
   end
 
