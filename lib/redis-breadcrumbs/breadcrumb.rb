@@ -15,7 +15,9 @@ class Redis
     def track!
       return if @tracked_in.nil? || @tracked_in == ""
 
-      track_clean_commands
+      jsons = @keys.clean_cmds.map(&:to_json)
+
+      redis.sadd @tracked_in, jsons
     end
 
     def clean!
@@ -35,12 +37,6 @@ class Redis
     end
 
     private
-
-    def track_clean_commands
-      jsons = @keys.clean_cmds.map(&:to_json)
-
-      redis.sadd @tracked_in, jsons
-    end
 
     def redis
       self.class.redis
