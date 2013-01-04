@@ -1,8 +1,8 @@
 module Breadcrumbs
   class MemberOfSetKey < Key
     def initialize member_template, set_template, clean_method
-      @member_template = member_template.to_s
-      @set_template = set_template.to_s
+      @member_template = member_template
+      @set_template = set_template
       @clean_method = clean_method
     end
 

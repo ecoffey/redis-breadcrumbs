@@ -1,7 +1,7 @@
 module Breadcrumbs
   class Key
     def initialize key_template
-      @key_template = key_template.to_s
+      @key_template = key_template
     end
 
     def specialize object
@@ -21,7 +21,8 @@ module Breadcrumbs
     TEMPLATE_REGEX = /(<\w+>)/
 
     def specialize_from_template template, object
-      matches = TEMPLATE_REGEX.match template.to_s
+      template = template.to_s
+      matches = TEMPLATE_REGEX.match template
 
       return template if matches.nil?
 
