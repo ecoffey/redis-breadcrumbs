@@ -1,0 +1,3 @@
+:reset => true
+prefix namespace
+:as => method_name
