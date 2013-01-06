@@ -6,14 +6,26 @@ describe 'Redis::Breadcrumb' do
   end
 
   it 'by default resets owned key with clean command' do
-    class ResetWithClean < Redis::Breadcrumb
+    class OwnedResetWithClean < Redis::Breadcrumb
       owns :a_key, :reset => true
     end
 
-    ResetWithClean.redis.set 'a_key', 'hello'
+    OwnedResetWithClean.redis.set 'a_key', 'hello'
 
-    ResetWithClean.reset!
+    OwnedResetWithClean.reset!
 
-    assert_nil ResetWithClean.redis.get('a_key')
+    assert_nil OwnedResetWithClean.redis.get('a_key')
+  end
+
+  it 'by default resets member of set keys with clean command' do
+    class MemberOfSetResetWithClean < Redis::Breadcrumb
+      member_of_set :blah => :a_set, :reset => true
+    end
+
+    MemberOfSetResetWithClean.redis.sadd 'a_set', 'blah'
+
+    MemberOfSetResetWithClean.reset!
+
+    refute MemberOfSetResetWithClean.redis.sismember 'a_set', 'blah'
   end
 end
