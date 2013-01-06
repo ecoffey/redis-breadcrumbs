@@ -21,6 +21,10 @@ module Breadcrumbs
     def clean_cmds
       @keys.map &:clean_cmd
     end
+
+    def reset_cmds
+      @keys.map(&:reset_cmd).compact
+    end
   end
 
 end

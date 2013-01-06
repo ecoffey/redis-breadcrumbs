@@ -20,6 +20,16 @@ class Redis
       redis.sadd @tracked_in, jsons
     end
 
+    def reset!
+      cmds = @keys.reset_cmds
+
+      cmds.each do |cmd_tuple|
+        cmd = cmd_tuple[0]
+        args = cmd_tuple[1..-1]
+        redis.send cmd, *args
+      end
+    end
+
     def clean!
       cmds = Set.new tracked_keys.concat(@keys.clean_cmds)
 

@@ -42,9 +42,9 @@ module Breadcrumbs
         Key.new tracked_in
       end
 
-      def owns key
+      def owns key, options={}
         owned_keys << key
-        keys << OwnedKey.new(key)
+        keys << OwnedKey.new(key, options)
       end
 
       def member_of_set member_to_set
@@ -67,6 +67,10 @@ module Breadcrumbs
 
       def track! object=UnspecializedDummyObject.new
         new(object).tap(&:track!)
+      end
+
+      def reset! object=UnspecializedDummyObject.new
+        new(object).tap(&:reset!)
       end
 
       def clean! object=UnspecializedDummyObject.new
