@@ -47,20 +47,24 @@ module Breadcrumbs
         keys << OwnedKey.new(key, options)
       end
 
-      def member_of_set member_to_set
+      def member_of_set options
+        member_to_set = Hash[[options.to_a.shift]]
+
         member = member_to_set.keys[0]
         set = member_to_set[member]
 
         member_of_sets << [member, set]
-        keys << MemberOfSetKey.new(member, set, :srem)
+        keys << MemberOfSetKey.new(member, set, :srem, options)
       end
 
-      def member_of_sorted_set member_to_set
+      def member_of_sorted_set options
+        member_to_set = Hash[[options.to_a.shift]]
+
         member = member_to_set.keys[0]
         set = member_to_set[member]
 
         member_of_sorted_sets << [member, set]
-        keys << MemberOfSetKey.new(member, set, :zrem)
+        keys << MemberOfSetKey.new(member, set, :zrem, options)
       end
 
       alias :member_of_zset :member_of_sorted_set
