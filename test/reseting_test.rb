@@ -24,12 +24,8 @@ describe 'Redis::Breadcrumb' do
 
     MemberOfSetResetWithClean.redis.sadd 'a_set', 'blah'
 
-    assert_equal 1, MemberOfSetResetWithClean.redis.scard('a_set')
-    assert MemberOfSetResetWithClean.redis.sismember 'a_set', 'blah'
-
     MemberOfSetResetWithClean.reset!
 
-    assert_equal 0, MemberOfSetResetWithClean.redis.scard('a_set')
     refute MemberOfSetResetWithClean.redis.sismember 'a_set', 'blah'
   end
 end
