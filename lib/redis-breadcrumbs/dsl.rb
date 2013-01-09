@@ -48,23 +48,11 @@ module Breadcrumbs
       end
 
       def member_of_set options
-        member_to_set = Hash[[options.to_a.shift]]
-
-        member = member_to_set.keys[0]
-        set = member_to_set[member]
-
-        member_of_sets << [member, set]
-        keys << MemberOfSetKey.new(member, set, :srem, options)
+        add_member_of_set options, member_of_sets, :srem
       end
 
       def member_of_sorted_set options
-        member_to_set = Hash[[options.to_a.shift]]
-
-        member = member_to_set.keys[0]
-        set = member_to_set[member]
-
-        member_of_sorted_sets << [member, set]
-        keys << MemberOfSetKey.new(member, set, :zrem, options)
+        add_member_of_set options, member_of_sorted_sets, :zrem
       end
 
       alias :member_of_zset :member_of_sorted_set
@@ -101,6 +89,18 @@ module Breadcrumbs
 
       def member_of_sorted_sets
         @member_of_sorted_sets ||= []
+      end
+
+      private
+
+      def add_member_of_set options, specific_keys, clean_cmd
+        member_to_set = Hash[[options.to_a.shift]]
+
+        member = member_to_set.keys[0]
+        set = member_to_set[member]
+
+        specific_keys << [member, set]
+        keys << MemberOfSetKey.new(member, set, clean_cmd, options)
       end
     end
 
