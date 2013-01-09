@@ -21,23 +21,11 @@ class Redis
     end
 
     def reset!
-      cmds = @keys.reset_cmds
-
-      cmds.each do |cmd_tuple|
-        cmd = cmd_tuple[0]
-        args = cmd_tuple[1..-1]
-        redis.send cmd, *args
-      end
+      run_cmds @keys.reset_cmds
     end
 
     def clean!
-      cmds = Set.new tracked_keys.concat(@keys.clean_cmds)
-
-      cmds.each do |cmd_tuple|
-        cmd = cmd_tuple[0]
-        args = cmd_tuple[1..-1]
-        redis.send cmd, *args
-      end
+      run_cmds Set.new(tracked_keys.concat(@keys.clean_cmds))
     end
 
     def tracked_keys
@@ -50,6 +38,14 @@ class Redis
 
     def redis
       self.class.redis
+    end
+
+    def run_cmds cmds
+      cmds.each do |cmd_tuple|
+        cmd = cmd_tuple[0]
+        args = cmd_tuple[1..-1]
+        redis.send cmd, *args
+      end
     end
 
   end
