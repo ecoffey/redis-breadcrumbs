@@ -15,9 +15,11 @@ module Breadcrumbs
     end
 
     def reset_cmd
-      if @resetable
-        clean_cmd
-      end
+      clean_cmd if @resetable
+    end
+
+    def key_name
+      @key_template
     end
   end
 

@@ -1,4 +1,5 @@
 require 'redis-breadcrumbs/keys'
+require 'redis-breadcrumbs/key_proxy'
 
 class BreadcrumbSpecializationError < Exception; end
 
@@ -42,9 +43,13 @@ module Breadcrumbs
         Key.new tracked_in
       end
 
-      def owns key, options={}
-        owned_keys << key
-        keys << OwnedKey.new(key, options)
+      def owns key_template, options={}
+        owned_keys << key_template
+        as = options.delete(:as)
+        key = OwnedKey.new key_template, options
+        keys[key_template] = OwnedKey.new(key_template, options)
+
+        create_as_method key_template, as unless as.nil?
       end
 
       def member_of_set options
@@ -100,7 +105,15 @@ module Breadcrumbs
         set = member_to_set[member]
 
         specific_keys << [member, set]
-        keys << MemberOfSetKey.new(member, set, clean_cmd, options)
+        keys[set] = MemberOfSetKey.new(member, set, clean_cmd, options)
+      end
+
+      def create_as_method key_template, as
+        instance_eval do
+          define_method as.to_sym do
+            KeyProxy.new(self.class.keys[key_template], redis)
+          end
+        end
       end
     end
 

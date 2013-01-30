@@ -7,7 +7,7 @@ class Redis
 
     attr_reader :tracked_in
 
-    def initialize object
+    def initialize object=Breadcrumbs::Dsl::UnspecializedDummyObject.new
       @tracked_in = self.class.tracked_in_key.specialize(object).to_s
       @keys = self.class.keys.specialize object
     end
