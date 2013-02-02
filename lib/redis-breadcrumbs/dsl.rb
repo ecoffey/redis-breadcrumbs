@@ -1,22 +1,7 @@
 require 'redis-breadcrumbs/keys'
-require 'redis-breadcrumbs/key_proxy'
-
-class BreadcrumbSpecializationError < Exception; end
 
 module Breadcrumbs
   module Dsl
-
-    class UnspecializedDummyObject
-      instance_methods.each do |m|
-        undef_method m unless m =~ /^(__|object_id|instance_eval)/
-      end
-
-      def method_missing method, *args
-        raise BreadcrumbSpecializationError, "#{method}"
-      end
-
-      def respond_to? *args; false; end
-    end
 
     def self.included subclass
       subclass.extend ClassMethods
@@ -62,18 +47,6 @@ module Breadcrumbs
 
       alias :member_of_zset :member_of_sorted_set
 
-      def track! object=UnspecializedDummyObject.new
-        new(object).tap(&:track!)
-      end
-
-      def reset! object=UnspecializedDummyObject.new
-        new(object).tap(&:reset!)
-      end
-
-      def clean! object=UnspecializedDummyObject.new
-        new(object).tap(&:clean!)
-      end
-
       def tracked_keys
         redis.smembers(@tracked_in).map do |json|
           JSON.parse(json)
@@ -108,13 +81,6 @@ module Breadcrumbs
         keys[set] = MemberOfSetKey.new(member, set, clean_cmd, options)
       end
 
-      def create_as_method key_template, as
-        instance_eval do
-          define_method as.to_sym do
-            KeyProxy.new(self.class.keys[key_template], redis)
-          end
-        end
-      end
     end
 
   end

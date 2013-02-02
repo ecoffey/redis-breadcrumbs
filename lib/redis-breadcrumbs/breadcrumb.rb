@@ -1,13 +1,24 @@
 require 'redis-breadcrumbs/dsl'
+require 'redis-breadcrumbs/as_methods'
+require 'redis-breadcrumbs/entrance'
 require 'redis-breadcrumbs/keys'
+require 'redis-breadcrumbs/unspecialized_dummy_object'
 
 class Redis
   class Breadcrumb
     include Breadcrumbs::Dsl
+    include Breadcrumbs::AsMethods
+    include Breadcrumbs::Entrance
+
+    class << self
+      def method_missing mthd, *args
+        new.send(mthd)
+      end
+    end
 
     attr_reader :tracked_in
 
-    def initialize object=Breadcrumbs::Dsl::UnspecializedDummyObject.new
+    def initialize object=Breadcrumbs::UnspecializedDummyObject.new
       @tracked_in = self.class.tracked_in_key.specialize(object).to_s
       @keys = self.class.keys.specialize object
     end
