@@ -33,7 +33,7 @@ Either
 
 or add the following to your Gemfile
 
-`gem "redis-breadcrumbs", "~> 0.0.2"`
+`gem "redis-breadcrumbs", "~> 0.0.3"`
 
 ## Usage
 
@@ -51,9 +51,9 @@ end
 Keys that have `<...>` snippets in them are **templates**.  When you call `track!` or `clean!`,
 the Breadcrumb will expect an object that responds to symbols in between the brackets.
 
-You can also specify a key to track keys in, with `tracked_in 'resque:worker:<id>:tracking'`
+You can also specify a key to track keys in with `tracked_in 'resque:worker:<id>:tracking'`
 
-Using `tracked_in` will let your breadcrumb remember how to clean up keys, that are not currently
+Using `tracked_in` will let your breadcrumb remember how to clean up keys that are not currently
 defined in the class (because of code changes, etc).
 
 Breadcrumb also needs to be told about a redis connection:
