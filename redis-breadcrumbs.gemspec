@@ -9,9 +9,9 @@ Gem::Specification.new do |s|
   s.authors     = ['Eoin Coffey']
   s.email       = ['ecoffey@gmail.com']
   s.homepage    = "https://github.com/ecoffey/redis-breadcrumbs"
-  s.summary     = %q{A friendly DSL for tracking and cleaning up redis keys.}
+  s.summary     = %q{A simple DSL to describe redis key ownership and relationships}
 
-  s.description = %q{Inherit from Redis::Breadcrumb to get going!}
+  s.description = %q{A simple DSL to describe redis key ownership and relationships}
 
   s.files         = `git ls-files`.split("\n")
   s.test_files    = `git ls-files -- {test,spec,features}/*`.split("\n")
