@@ -12,7 +12,7 @@ class Redis
 
     class << self
       def method_missing mthd, *args
-        new.send(mthd)
+        new.public_send(mthd)
       end
     end
 
@@ -55,7 +55,7 @@ class Redis
       cmds.each do |cmd_tuple|
         cmd = cmd_tuple[0]
         args = cmd_tuple[1..-1]
-        redis.send cmd, *args
+        redis.public_send cmd, *args
       end
     end
 

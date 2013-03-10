@@ -6,7 +6,7 @@ module Breadcrumbs
     end
 
     def method_missing mthd, *args
-      @redis.send(mthd, *([@key.key_name] + args))
+      @redis.public_send(mthd, *([@key.key_name] + args))
     end
   end
 end
