@@ -8,10 +8,6 @@ module Breadcrumbs
       subclass.extend ClassMethods
     end
 
-    def self.included subclass
-      subclass.extend ClassMethods
-    end
-
     module ClassMethods
       def track! object=UnspecializedDummyObject.new
         new(object).tap(&:track!)

@@ -31,7 +31,7 @@ module Breadcrumbs
       matches.captures.each do |method_marker|
         method = method_marker[1..-2].to_sym
 
-        specialized.gsub! method_marker, object.public_send(method)
+        specialized.gsub! method_marker, object.public_send(method).to_s
       end
 
       specialized
