@@ -1,5 +1,7 @@
 Gemfile.lock
 pkg
 .rvmrc
+.ruby-version
+.ruby-gemset
 *.rdb
 .rbx
